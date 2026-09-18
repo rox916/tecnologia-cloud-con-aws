@@ -15,6 +15,7 @@ import StatCard from "../components/ui/StatCard";
 import SecurityCard from "../components/ui/SecurityCard";
 import ChartCard from "../components/ui/ChartCard";
 import { dashboardSummary, securityOverview, monthlyCostTrend } from "../data/mockData";
+import { useAppState } from "../context/AppState";
 
 // Registrar componentes de Chart.js
 ChartJS.register(
@@ -28,6 +29,11 @@ ChartJS.register(
 );
 
 export default function Dashboard() {
+    const { items } = useAppState();
+
+    const totalMonthly = items.reduce((acc, curr) => acc + curr.monthlyCost, 0);
+    const totalAnnual = totalMonthly * 12;
+
     const chartData = {
         labels: monthlyCostTrend.map((m) => m.month),
         datasets: [
@@ -75,13 +81,13 @@ export default function Dashboard() {
                 />
                 <StatCard
                     label="Costo mensual"
-                    value={`$${dashboardSummary.monthlyCost.toFixed(2)}`}
+                    value={`$${totalMonthly.toFixed(2)}`}
                     icon={DollarSign}
                     accentColor="cost"
                 />
                 <StatCard
                     label="Costo anual"
-                    value={`$${dashboardSummary.annualCost.toFixed(2)}`}
+                    value={`$${totalAnnual.toFixed(2)}`}
                     icon={DollarSign}
                     accentColor="cost"
                 />

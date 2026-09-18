@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import '../utils/chartSetup';
-import { INITIAL_COST_ITEMS, SERVICE_RATES } from '../data/mockData';
+import { SERVICE_RATES } from '../data/mockData';
 import type { CostItem } from '../types/cloud';
+import { useAppState } from '../context/AppState';
 
 export const Costs: React.FC = () => {
-    const [items, setItems] = useState<CostItem[]>(INITIAL_COST_ITEMS);
+    const { items, addItem, deleteItem } = useAppState();
 
     // Form State
     const [selectedService, setSelectedService] = useState<string>('Amazon EC2');
@@ -33,11 +34,11 @@ export const Costs: React.FC = () => {
             monthlyCost: estimatedMonthly,
             annualCost: estimatedAnnual,
         };
-        setItems([...items, newItem]);
+        addItem(newItem);
     };
 
     const handleDeleteItem = (id: string) => {
-        setItems(items.filter((item) => item.id !== id));
+        deleteItem(id);
     };
 
     // Datos para el gráfico de distribución

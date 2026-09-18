@@ -6,6 +6,7 @@ import { inputClasses } from "../utils/formStyles";
 import { awsServices } from "../data/awsServices";
 import { APPLICATION_TYPES, AVAILABILITY_LEVELS, MIGRATION_GOALS, REGIONS } from "../data/formOptions";
 import type { CloudProposal, ApplicationType, AvailabilityLevel, MigrationGoal } from "../types/cloud";
+import { useAppState } from "../context/AppState";
 
 // Estado inicial del formulario, tipado sobre CloudProposal sin id/createdAt
 type ProposalDraft = Omit<CloudProposal, "id" | "createdAt">;
@@ -23,7 +24,7 @@ const emptyDraft: ProposalDraft = {
 
 export default function Planning() {
     const [draft, setDraft] = useState<ProposalDraft>(emptyDraft);
-    const [proposals, setProposals] = useState<CloudProposal[]>([]);
+    const { proposals, addProposal } = useAppState();
 
     const toggleService = (id: string) => {
         setDraft((prev) => ({
@@ -44,7 +45,7 @@ export default function Planning() {
             createdAt: new Date().toISOString(),
         };
 
-        setProposals((prev) => [newProposal, ...prev]);
+        addProposal(newProposal);
         setDraft(emptyDraft); // limpiamos el formulario tras registrar
     };
 
