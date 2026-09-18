@@ -1,14 +1,33 @@
 import { DollarSign, Server, ShieldCheck, Layers, Globe, Activity } from "lucide-react";
 import { Line } from "react-chartjs-2";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+} from "chart.js";
 import Header from "../components/layout/Header";
 import StatCard from "../components/ui/StatCard";
 import SecurityCard from "../components/ui/SecurityCard";
 import ChartCard from "../components/ui/ChartCard";
 import { dashboardSummary, securityOverview, monthlyCostTrend } from "../data/mockData";
 
+// Registrar componentes de Chart.js
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+);
+
 export default function Dashboard() {
-    // Datos formateados para Chart.js: un arreglo de labels (meses)
-    // y un dataset con los valores de costo.
     const chartData = {
         labels: monthlyCostTrend.map((m) => m.month),
         datasets: [
@@ -27,7 +46,12 @@ export default function Dashboard() {
         responsive: true,
         plugins: { legend: { display: false } },
         scales: {
-            y: { ticks: { callback: (value: number) => `$${value}` } },
+            y: {
+                ticks: {
+                    // Tipar explicitamente a 'string | number' arregla el TS2322
+                    callback: (value: string | number) => `$${value}`,
+                },
+            },
         },
     };
 
@@ -35,7 +59,6 @@ export default function Dashboard() {
         <div>
             <Header title="Dashboard" subtitle="Resumen general de la solución Cloud" />
 
-            {/* Fila de KPIs: 7 StatCards, una por cada dato pedido en el enunciado */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <StatCard label="Servicios utilizados" value={dashboardSummary.servicesUsed} icon={Layers} accentColor="primary" />
                 <StatCard label="Región seleccionada" value={dashboardSummary.selectedRegion} icon={Globe} accentColor="primary" />
@@ -56,7 +79,6 @@ export default function Dashboard() {
                 />
             </div>
 
-            {/* Gráfico + resumen de seguridad, lado a lado en desktop */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
                     <ChartCard title="Tendencia de costo mensual">
