@@ -1,5 +1,14 @@
 // src/types/cloud.ts
 
+// ---------- Comunes ----------
+export type StatusLevel = "success" | "warning" | "danger";
+
+export interface NavItem {
+    label: string;
+    path: string;
+    icon: string;
+}
+
 // ---------- Módulo: Costos ----------
 export interface CostEstimate {
     id: string;
@@ -12,13 +21,14 @@ export interface CostEstimate {
     annualCost: number;
 }
 
-// ---------- Comunes ----------
-export type StatusLevel = "success" | "warning" | "danger";
-
-export interface NavItem {
-    label: string;
-    path: string;
-    icon: string;
+export interface CostItem {
+    id: string;
+    service: string;
+    quantity: number;
+    hoursPerMonth: number;
+    hourlyRate: number;
+    monthlyCost: number;
+    annualCost: number;
 }
 
 // ---------- Módulo: Servicios AWS ----------
@@ -59,11 +69,13 @@ export interface CloudProposal {
 // ---------- Módulo: Infraestructura Global ----------
 export interface Region {
     id: string;
-    code: string;
-    name: string;
-    location: string;
-    deployedServices: string[];
-    status: StatusLevel;
+    code: string;           // ej. "us-east-1"
+    name: string;           // ej. "EE. UU. Este (N. Virginia)"
+    location: string;       // ej. "Norteamérica"
+    azCount: number;        // Zonas de Disponibilidad (ej. 6)
+    latencyMs: number;      // Latencia media estimada
+    deployedServices: string[]; // Nombres de servicios desplegados
+    status: StatusLevel;    // "success" (Activo), "warning" (Degradado/Mantenimiento), "danger" (Inactivo)
 }
 
 // ---------- Módulo: Seguridad ----------
@@ -90,15 +102,4 @@ export interface DashboardSummary {
     securityStatus: StatusLevel;
     cloudResources: number;
     architectureStatus: StatusLevel;
-}
-// src/types/cloud.ts
-
-export interface CostItem {
-    id: string;
-    service: string;
-    quantity: number;
-    hoursPerMonth: number;
-    hourlyRate: number;
-    monthlyCost: number;
-    annualCost: number;
 }

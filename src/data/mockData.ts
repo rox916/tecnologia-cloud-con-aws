@@ -1,5 +1,5 @@
 // src/data/mockData.ts
-import type { DashboardSummary, SecurityIndicator } from "../types/cloud";
+import type { DashboardSummary, SecurityIndicator, Region } from "../types/cloud";
 
 export const dashboardSummary: DashboardSummary = {
     servicesUsed: 7,
@@ -56,3 +56,46 @@ export const SERVICE_RATES: Record<string, number> = {
     'AWS Lambda': 0.05,
     'Amazon VPC': 0.03,
 };
+
+export const MOCK_REGIONS: Region[] = [
+    {
+        id: 'reg-1',
+        code: 'us-east-1',
+        name: 'EE. UU. Este (N. Virginia)',
+        location: 'Norteamérica',
+        azCount: 6,
+        latencyMs: 45,
+        deployedServices: ['Amazon EC2', 'Amazon S3', 'Amazon RDS', 'AWS IAM', 'Amazon CloudFront'],
+        status: 'success',
+    },
+    {
+        id: 'reg-2',
+        code: 'us-west-2',
+        name: 'EE. UU. Oeste (Oregón)',
+        location: 'Norteamérica',
+        azCount: 4,
+        latencyMs: 85,
+        deployedServices: ['Amazon EC2', 'Amazon S3', 'AWS Lambda'],
+        status: 'success',
+    },
+    {
+        id: 'reg-3',
+        code: 'sa-east-1',
+        name: 'América del Sur (São Paulo)',
+        location: 'Sudamérica',
+        azCount: 3,
+        latencyMs: 25,
+        deployedServices: ['Amazon EC2', 'Amazon S3', 'Amazon RDS'],
+        status: 'success',
+    },
+    {
+        id: 'reg-4',
+        code: 'eu-west-1',
+        name: 'Europa (Irlanda)',
+        location: 'Europa',
+        azCount: 3,
+        latencyMs: 140,
+        deployedServices: ['Amazon S3', 'AWS KMS'],
+        status: 'warning', // Ejemplo con mantenimiento o advertencia
+    },
+];
