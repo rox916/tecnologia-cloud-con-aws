@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MOCK_REGIONS } from '../data/mockData';
 import type { Region, StatusLevel } from '../types/cloud';
 
@@ -6,13 +6,11 @@ export default function Infrastructure() {
     const [regions] = useState<Region[]>(MOCK_REGIONS);
     const [filterLocation, setFilterLocation] = useState<string>('all');
 
-    // Filtrado dinámico por ubicación
     const filteredRegions = regions.filter((region) => {
         if (filterLocation === 'all') return true;
         return region.location.toLowerCase() === filterLocation.toLowerCase();
     });
 
-    // Mapeo de colores según estado
     const getStatusBadge = (status: StatusLevel) => {
         switch (status) {
             case 'success':
@@ -47,7 +45,6 @@ export default function Infrastructure() {
 
     return (
         <div className="p-6 space-y-6 bg-[#F8FAFC] min-h-screen">
-            {/* Encabezado */}
             <div>
                 <h1 className="text-2xl font-bold text-[#1E293B]">Infraestructura Global AWS</h1>
                 <p className="text-[#64748B] text-sm mt-1">
@@ -55,7 +52,6 @@ export default function Infrastructure() {
                 </p>
             </div>
 
-            {/* Tarjetas de Resumen Métrico */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] shadow-sm">
                     <p className="text-xs font-semibold text-[#64748B] uppercase">Regiones Activas</p>
@@ -84,7 +80,6 @@ export default function Infrastructure() {
                 </div>
             </div>
 
-            {/* Filtro de ubicación */}
             <div className="bg-white p-4 rounded-lg border border-[#E2E8F0] shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-[#1E293B]">Filtrar por Región / Ubicación:</span>
@@ -104,7 +99,6 @@ export default function Infrastructure() {
                 </span>
             </div>
 
-            {/* Visualización de Regiones (Grilla de Tarjetas) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredRegions.map((region) => (
                     <div
@@ -112,7 +106,6 @@ export default function Infrastructure() {
                         className="bg-white rounded-lg border border-[#E2E8F0] shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col justify-between"
                     >
                         <div>
-                            {/* Header de la tarjeta */}
                             <div className="flex justify-between items-start mb-3">
                                 <div>
                                     <div className="flex items-center gap-2">
@@ -126,7 +119,6 @@ export default function Infrastructure() {
                                 {getStatusBadge(region.status)}
                             </div>
 
-                            {/* Indicadores clave */}
                             <div className="grid grid-cols-2 gap-2 my-4 bg-[#F8FAFC] p-3 rounded-md border border-[#E2E8F0] text-xs">
                                 <div>
                                     <span className="text-[#64748B] block">Zonas de Disponibilidad:</span>
@@ -138,7 +130,6 @@ export default function Infrastructure() {
                                 </div>
                             </div>
 
-                            {/* Servicios desplegados en esta región */}
                             <div className="mt-4">
                                 <p className="text-xs font-semibold text-[#64748B] uppercase mb-2">
                                     Servicios Desplegados en la Región
@@ -159,7 +150,6 @@ export default function Infrastructure() {
                 ))}
             </div>
 
-            {/* Tabla detallada para consolidación */}
             <div className="bg-white rounded-lg border border-[#E2E8F0] shadow-sm overflow-hidden">
                 <div className="p-4 border-b border-[#E2E8F0]">
                     <h2 className="text-md font-semibold text-[#1E293B]">Matriz Consolidada de Infraestructura Global</h2>
