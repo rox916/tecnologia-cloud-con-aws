@@ -1,12 +1,24 @@
 // src/types/cloud.ts
 
+// ---------- Módulo: Costos ----------
+export interface CostEstimate {
+    id: string;
+    serviceId: string;
+    serviceName: string;
+    quantity: number;
+    estimatedHours: number;
+    unitCost: number;
+    monthlyCost: number;
+    annualCost: number;
+}
+
 // ---------- Comunes ----------
 export type StatusLevel = "success" | "warning" | "danger";
 
 export interface NavItem {
     label: string;
     path: string;
-    icon: string; // nombre del icono de lucide-react
+    icon: string;
 }
 
 // ---------- Módulo: Servicios AWS ----------
@@ -19,7 +31,7 @@ export type ServiceCategory =
 
 export interface AwsService {
     id: string;
-    name: string;          // "EC2", "S3", etc.
+    name: string;
     category: ServiceCategory;
     description: string;
     mainFunction: string;
@@ -39,29 +51,17 @@ export interface CloudProposal {
     region: string;
     estimatedUsers: number;
     availability: AvailabilityLevel;
-    selectedServices: string[]; // ids de AwsService
+    selectedServices: string[];
     migrationGoal: MigrationGoal;
-    createdAt: string; // ISO date
-}
-
-// ---------- Módulo: Costos ----------
-export interface CostEstimate {
-    id: string;
-    serviceId: string;
-    serviceName: string;
-    quantity: number;
-    estimatedHours: number;
-    unitCost: number;
-    monthlyCost: number;
-    annualCost: number;
+    createdAt: string;
 }
 
 // ---------- Módulo: Infraestructura Global ----------
 export interface Region {
     id: string;
-    code: string;       // "us-east-1"
-    name: string;        // "N. Virginia"
-    location: string;    // "Estados Unidos"
+    code: string;
+    name: string;
+    location: string;
     deployedServices: string[];
     status: StatusLevel;
 }
@@ -69,7 +69,7 @@ export interface Region {
 // ---------- Módulo: Seguridad ----------
 export interface SecurityIndicator {
     id: string;
-    title: string;             // "Responsabilidad Compartida", "IAM", etc.
+    title: string;
     description: string;
     status: StatusLevel;
 }
@@ -77,7 +77,7 @@ export interface SecurityIndicator {
 // ---------- Módulo: Arquitectura de Red ----------
 export interface NetworkNode {
     id: string;
-    label: string;   // "Internet", "Route 53", "CloudFront", "VPC", "EC2/RDS"
+    label: string;
     description: string;
 }
 
@@ -90,4 +90,15 @@ export interface DashboardSummary {
     securityStatus: StatusLevel;
     cloudResources: number;
     architectureStatus: StatusLevel;
+}
+// src/types/cloud.ts
+
+export interface CostItem {
+    id: string;
+    service: string;
+    quantity: number;
+    hoursPerMonth: number;
+    hourlyRate: number;
+    monthlyCost: number;
+    annualCost: number;
 }

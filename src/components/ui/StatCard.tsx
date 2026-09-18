@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 interface StatCardProps {
     label: string;
     value: string | number;
+    subtitle?: string; // Propiedad para aclaración
     icon: LucideIcon;
     accentColor?: "primary" | "security" | "cost" | "alert";
 }
@@ -14,7 +15,7 @@ const ACCENT_MAP: Record<NonNullable<StatCardProps["accentColor"]>, string> = {
     alert: "text-alert bg-alert/10",
 };
 
-export default function StatCard({ label, value, icon: Icon, accentColor = "primary" }: StatCardProps) {
+export default function StatCard({ label, value, subtitle, icon: Icon, accentColor = "primary" }: StatCardProps) {
     return (
         <div className="bg-card border border-border rounded-card shadow-card p-5 flex items-center gap-4">
             <div className={`w-11 h-11 rounded-lg flex items-center justify-center shrink-0 ${ACCENT_MAP[accentColor]}`}>
@@ -23,6 +24,9 @@ export default function StatCard({ label, value, icon: Icon, accentColor = "prim
             <div>
                 <p className="text-xs text-text-secondary font-medium">{label}</p>
                 <p className="text-xl font-bold text-text-primary mt-0.5">{value}</p>
+                {subtitle && (
+                    <p className="text-[11px] text-text-secondary/80 mt-0.5 leading-none">{subtitle}</p>
+                )}
             </div>
         </div>
     );

@@ -60,11 +60,38 @@ export default function Dashboard() {
             <Header title="Dashboard" subtitle="Resumen general de la solución Cloud" />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <StatCard label="Servicios utilizados" value={dashboardSummary.servicesUsed} icon={Layers} accentColor="primary" />
-                <StatCard label="Región seleccionada" value={dashboardSummary.selectedRegion} icon={Globe} accentColor="primary" />
-                <StatCard label="Costo mensual" value={`$${dashboardSummary.monthlyCost.toFixed(2)}`} icon={DollarSign} accentColor="cost" />
-                <StatCard label="Costo anual" value={`$${dashboardSummary.annualCost.toFixed(2)}`} icon={DollarSign} accentColor="cost" />
-                <StatCard label="Recursos Cloud" value={dashboardSummary.cloudResources} icon={Server} accentColor="primary" />
+                <StatCard
+                    label="Servicios AWS"
+                    value={dashboardSummary.servicesUsed}
+                    subtitle="Tipos de tecnología"
+                    icon={Layers}
+                    accentColor="primary"
+                />
+                <StatCard
+                    label="Región seleccionada"
+                    value={dashboardSummary.selectedRegion}
+                    icon={Globe}
+                    accentColor="primary"
+                />
+                <StatCard
+                    label="Costo mensual"
+                    value={`$${dashboardSummary.monthlyCost.toFixed(2)}`}
+                    icon={DollarSign}
+                    accentColor="cost"
+                />
+                <StatCard
+                    label="Costo anual"
+                    value={`$${dashboardSummary.annualCost.toFixed(2)}`}
+                    icon={DollarSign}
+                    accentColor="cost"
+                />
+                <StatCard
+                    label="Componentes Activos"
+                    value={dashboardSummary.cloudResources}
+                    subtitle="Instancias totales"
+                    icon={Server}
+                    accentColor="primary"
+                />
                 <StatCard
                     label="Estado de seguridad"
                     value={dashboardSummary.securityStatus === "success" ? "Correcto" : "Revisar"}
