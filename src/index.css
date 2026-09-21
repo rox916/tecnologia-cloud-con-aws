@@ -5,3 +5,25 @@
 body {
   @apply bg-background text-text-primary;
 }
+
+.dark body { background: #0f172a; color: #e2e8f0; }
+.dark .bg-background { background-color: #111827; }
+.dark .bg-card { background-color: #1e293b; }
+.dark .text-text-primary { color: #f8fafc; }
+.dark .text-text-secondary { color: #94a3b8; }
+.dark .border-border { border-color: #334155; }
+.dark .shadow-card { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28); }
+
+.icon-button {
+  @apply w-9 h-9 rounded-lg border border-border bg-card text-text-secondary flex items-center justify-center transition-colors hover:text-primary hover:border-primary/50;
+}
+
+.page-enter { animation: page-enter 320ms ease-out both; }
+.toast { animation: toast-in 220ms ease-out both; }
+
+@keyframes page-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes toast-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

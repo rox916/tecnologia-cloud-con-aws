@@ -1,5 +1,22 @@
 // src/types/cloud.ts
 
+// Agregar al final de src/types/cloud.ts
+
+// ---------- Tiempo real ----------
+export interface LiveMetrics {
+  activeConnections: number;   // conexiones/requests activos simulados
+  networkThroughputMbps: number;
+  cpuUsagePercent: number;
+  currentMonthlyCost: number;  // fluctúa levemente para simular uso real
+  lastUpdated: string;         // hora del último "tick"
+}
+
+export interface RegionLiveStatus {
+  regionId: string;
+  latency: number;      // ms
+  load: number;         // % de carga
+}
+
 // ---------- Comunes ----------
 export type StatusLevel = "success" | "warning" | "danger";
 
@@ -68,14 +85,16 @@ export interface CloudProposal {
 
 // ---------- Módulo: Infraestructura Global ----------
 export interface Region {
-    id: string;
-    code: string;           // ej. "us-east-1"
-    name: string;           // ej. "EE. UU. Este (N. Virginia)"
-    location: string;       // ej. "Norteamérica"
-    azCount: number;        // Zonas de Disponibilidad (ej. 6)
-    latencyMs: number;      // Latencia media estimada
-    deployedServices: string[]; // Nombres de servicios desplegados
-    status: StatusLevel;    // "success" (Activo), "warning" (Degradado/Mantenimiento), "danger" (Inactivo)
+  id: string;
+  code: string;
+  name: string;
+  location: string;
+  deployedServices: string[];
+  status: StatusLevel;
+  latitude: number;
+  azCount?: number;
+  longitude: number;
+    latencyMs?: number;
 }
 
 // ---------- Módulo: Seguridad ----------
