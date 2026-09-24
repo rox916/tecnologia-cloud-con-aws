@@ -38,6 +38,11 @@ export default function RegionCard({ region }: RegionCardProps) {
             ))}
           </div>
         )}
+        <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-border">
+          <div><p className="text-[11px] text-text-secondary">Latencia estimada</p><p className="text-xs font-semibold text-text-primary">{region.latencyMs ?? "-"} ms</p></div>
+          <div><p className="text-[11px] text-text-secondary">Cumplimiento</p><p className="text-xs font-semibold text-text-primary">{region.compliance?.slice(0, 2).join(" · ") ?? "Información pendiente"}</p></div>
+        </div>
+        <p className="text-xs text-text-secondary mt-3">{region.recommendedFor ?? "Región disponible para cargas generales"}</p>
       </div>
     </div>
   );

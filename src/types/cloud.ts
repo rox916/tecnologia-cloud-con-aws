@@ -62,6 +62,11 @@ export interface AwsService {
     category: ServiceCategory;
     description: string;
     mainFunction: string;
+    useCases: string[];
+    architectureRole: string;
+    pricingModel: string;
+    keyFeatures: string[];
+    documentationUrl: string;
     status: "active" | "available" | "inactive";
 }
 
@@ -95,6 +100,9 @@ export interface Region {
   azCount?: number;
   longitude: number;
     latencyMs?: number;
+    compliance?: string[];
+    capacityNote?: string;
+    recommendedFor?: string;
 }
 
 // ---------- Módulo: Seguridad ----------

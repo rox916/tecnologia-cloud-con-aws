@@ -12,7 +12,7 @@ interface HeaderProps {
 // Así no se crea un Header distinto por módulo (cero duplicado).
 export default function Header({ title, subtitle }: HeaderProps) {
     const [showNotifications, setShowNotifications] = useState(false);
-    const { theme, toggleTheme, notifications, proposals, costEstimates, activityLog, selectedRegionId } = useCloudData();
+    const { theme, toggleTheme, notifications, clearNotifications, proposals, costEstimates, activityLog, selectedRegionId } = useCloudData();
 
     const exportReport = () => downloadReport("cloudops-reporte.json", {
         generatedAt: new Date().toISOString(),
@@ -40,7 +40,10 @@ export default function Header({ title, subtitle }: HeaderProps) {
                     </button>
                     {showNotifications && <div className="absolute right-0 top-11 z-30 w-72 bg-card border border-border rounded-xl shadow-card p-3">
                         <div className="flex items-center justify-between mb-2"><p className="text-sm font-semibold text-text-primary">Notificaciones</p><button type="button" onClick={() => setShowNotifications(false)} aria-label="Cerrar notificaciones" className="text-text-secondary"><X size={15} /></button></div>
-                        {notifications.length === 0 ? <p className="text-xs text-text-secondary py-3">No hay notificaciones nuevas.</p> : notifications.map((item) => <p key={item.id} className="text-xs text-text-primary border-t border-border py-2">{item.message}</p>)}
+                        {notifications.length === 0 ? <p className="text-xs text-text-secondary py-3">No hay notificaciones nuevas.</p> : <>
+                            <div className="max-h-64 overflow-y-auto">{[...notifications].reverse().map((item) => <div key={item.id} className="border-t border-border py-2"><p className="text-xs text-text-primary">{item.message}</p><p className="text-[10px] text-text-secondary mt-0.5">{item.createdAt}</p></div>)}</div>
+                            <button type="button" onClick={clearNotifications} className="text-xs text-primary font-medium mt-2 hover:underline">Limpiar notificaciones</button>
+                        </>}
                     </div>}
                 </div>
                 <button type="button" onClick={toggleTheme} title="Cambiar tema" aria-label="Cambiar tema" className="icon-button">

@@ -13,14 +13,14 @@ export default function CostCard({ estimate, onRemove }: CostCardProps) {
       <div>
         <h3 className="text-sm font-semibold text-text-primary">{estimate.serviceName}</h3>
         <p className="text-xs text-text-secondary mt-0.5">
-          {estimate.quantity} unidad(es) · {estimate.estimatedHours} h/mes · {formatCurrency(estimate.unitCost)}/h
+          {estimate.quantity} unidad(es) · {estimate.estimatedHours} horas activas/mes · {formatCurrency(estimate.unitCost)} por unidad/hora
         </p>
       </div>
 
       <div className="flex items-center gap-4">
         <div className="text-right">
-          <p className="text-sm font-bold text-cost">{formatCurrency(estimate.monthlyCost)}<span className="text-xs font-normal text-text-secondary">/mes</span></p>
-          <p className="text-xs text-text-secondary">{formatCurrency(estimate.annualCost)}/año</p>
+          <p className="text-sm font-bold text-cost">{formatCurrency(estimate.monthlyCost)}<span className="text-xs font-normal text-text-secondary"> por mes</span></p>
+          <p className="text-xs text-text-secondary">Proyección anual: {formatCurrency(estimate.annualCost)}</p>
         </div>
         <button
           onClick={() => onRemove(estimate.id)}

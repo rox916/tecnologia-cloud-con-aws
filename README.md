@@ -1,75 +1,47 @@
-# React + TypeScript + Vite
+ # CloudOps AWS Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ Panel interactivo en React + TypeScript para explorar una arquitectura AWS, consultar servicios, comparar regiones, estimar costos y crear propuestas de solución.
 
-Currently, two official plugins are available:
+ ## Inicio rápido
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+ Requisitos: Node.js 20 o superior.
 
-## React Compiler
+ ```bash
+ npm install
+ npm run dev
+ ```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+ Comandos disponibles:
 
-## Expanding the ESLint configuration
+ ```bash
+ npm run build   # typecheck y build de producción
+ npm run lint    # revisión ESLint
+ npm run preview # sirve el build generado
+ ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+ ## Módulos
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+ - **Dashboard:** resumen de recursos, costo estimado, región activa y actividad reciente.
+ - **Servicios AWS:** búsqueda y filtros por categoría. Cada tarjeta abre un detalle con función, rol arquitectónico, casos de uso, capacidades, modelo de precios y enlace a la documentación oficial.
+ - **Infraestructura global:** mapa interactivo y catálogo de regiones. La selección actualiza el contexto compartido; cada región muestra zonas de disponibilidad, servicios desplegados, latencia, cumplimiento, capacidad y recomendación de uso.
+ - **Costos y economía cloud:** crea escenarios por servicio y cantidad. La calculadora usa `tarifa por unidad/hora x unidades x horas activas al mes`; incluye presets de 24, 160 y 730 horas, proyección anual, presupuesto, gráfico y exportación JSON.
+ - **Planificación:** genera propuestas según tipo de aplicación, disponibilidad, objetivo, usuarios, región y servicios seleccionados.
+ - **Seguridad y red:** consulta controles de seguridad y una vista de la arquitectura de red.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+ ## Interacciones y estado
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+ Las acciones relevantes muestran notificaciones temporales y quedan disponibles en la bandeja del encabezado con hora y opción para limpiar el historial. El tema claro/oscuro, la región de trabajo, propuestas, actividad y estimaciones se guardan en `localStorage`. El reporte general y las estimaciones de costos se pueden exportar como JSON.
 
-```
+ La interfaz incluye transiciones de navegación, aparición de paneles, elevación de tarjetas y animaciones de notificaciones. Respeta `prefers-reduced-motion` para reducir movimiento cuando el sistema lo solicita.
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+ ## Estructura principal
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+ - `src/pages`: vistas de cada módulo.
+ - `src/components`: layout y componentes reutilizables.
+ - `src/context/CloudDataContext.tsx`: estado compartido, persistencia y notificaciones.
+ - `src/data`: catálogo, regiones, costos y datos de la demo.
+ - `src/types/cloud.ts`: contratos TypeScript del dominio.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+ ## Alcance
 
-```
+ Los precios, métricas, estados y despliegues son datos simulados para demostración. No representan una cuenta AWS real ni sustituyen AWS Pricing Calculator, la documentación oficial o controles de seguridad de producción.

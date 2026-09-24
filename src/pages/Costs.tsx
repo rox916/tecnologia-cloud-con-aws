@@ -120,13 +120,21 @@ export default function Costs() {
           <FormField label="Cantidad">
             <input type="number" min={1} className={inputClasses} value={quantity} onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))} />
           </FormField>
-          <FormField label="Horas / mes">
+          <FormField label="Horas activas al mes">
             <input type="number" min={1} max={744} className={inputClasses} value={hours} onChange={(e) => setHours(Math.min(744, Math.max(1, Number(e.target.value))))} />
+            <p className="text-[11px] text-text-secondary mt-1">Horas estimadas de uso durante un mes (máximo 744).</p>
+            <div className="flex flex-wrap gap-1.5 mt-2" aria-label="Presets de horas de uso">
+              {[{ label: "24 h", value: 24 }, { label: "160 h", value: 160 }, { label: "730 h", value: 730 }].map((preset) => (
+                <button key={preset.value} type="button" onClick={() => setHours(preset.value)} className={`px-2 py-1 rounded-md border text-[11px] transition-colors ${hours === preset.value ? "border-primary bg-primary/10 text-primary" : "border-border text-text-secondary hover:border-primary/50"}`}>
+                  {preset.label}
+                </button>
+              ))}
+            </div>
           </FormField>
           <div className="rounded-lg bg-primary/5 border border-primary/15 px-3 py-2.5">
-            <p className="text-[11px] text-text-secondary">Vista previa mensual</p>
+            <p className="text-[11px] text-text-secondary">Estimación mensual</p>
             <p className="text-lg font-bold text-primary">{formatCurrency(previewMonthly)}</p>
-            <p className="text-[11px] text-text-secondary">{formatCurrency(unitCost)} / hora</p>
+            <p className="text-[11px] text-text-secondary">{formatCurrency(unitCost)} por unidad/hora</p>
           </div>
           <button type="submit" className="inline-flex items-center justify-center gap-2 bg-primary text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors">
             <Plus size={17} /> Agregar
@@ -173,8 +181,8 @@ export default function Costs() {
           <div className="bg-card border border-border rounded-card shadow-card p-5 flex justify-between">
             <span className="text-sm font-medium text-text-primary">Costo total</span>
             <div className="text-right">
-              <p className="text-lg font-bold text-cost">{formatCurrency(totals.monthly)}<span className="text-xs font-normal text-text-secondary">/mes</span></p>
-              <p className="text-xs text-text-secondary">{formatCurrency(totals.annual)}/año</p>
+              <p className="text-lg font-bold text-cost">{formatCurrency(totals.monthly)}<span className="text-xs font-normal text-text-secondary"> por mes</span></p>
+              <p className="text-xs text-text-secondary">Proyección anual: {formatCurrency(totals.annual)}</p>
             </div>
           </div>
         </div>

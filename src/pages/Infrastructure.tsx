@@ -46,6 +46,11 @@ export default function Infrastructure() {
           <div className="bg-background rounded-lg p-3 flex items-center gap-2"><ShieldCheck size={16} className="text-security" /><span className="text-xs text-text-secondary">Estado: {selectedRegion.status === "success" ? "Operativo" : selectedRegion.status === "warning" ? "Revisión" : "Incidente"}</span></div>
           <div className="bg-background rounded-lg p-3 flex items-center gap-2"><Activity size={16} className="text-cost" /><span className="text-xs text-text-secondary">{selectedRegion.azCount ?? 0} zonas de disponibilidad</span></div>
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 text-xs">
+          <div className="bg-background rounded-lg p-3"><p className="text-text-secondary">Latencia estimada</p><p className="font-semibold text-text-primary mt-1">{selectedRegion.latencyMs} ms desde el punto de referencia</p></div>
+          <div className="bg-background rounded-lg p-3"><p className="text-text-secondary">Capacidad</p><p className="font-semibold text-text-primary mt-1">{selectedRegion.capacityNote ?? "Capacidad general disponible"}</p></div>
+          <div className="bg-background rounded-lg p-3"><p className="text-text-secondary">Cumplimiento</p><p className="font-semibold text-text-primary mt-1">{selectedRegion.compliance?.join(" · ") ?? "Información pendiente"}</p></div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
