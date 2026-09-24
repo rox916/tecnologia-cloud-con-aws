@@ -11,6 +11,7 @@ export interface ActivityEntry {
 export interface NotificationEntry {
   id: string;
   message: string;
+  createdAt: string;
 }
 
 interface CloudDataContextValue {
@@ -27,6 +28,7 @@ interface CloudDataContextValue {
   toggleTheme: () => void;
   notifications: NotificationEntry[];
   dismissNotification: (id: string) => void;
+  clearNotifications: () => void;
 }
 
 const CloudDataContext = createContext<CloudDataContextValue | null>(null);
@@ -60,7 +62,7 @@ export function CloudDataProvider({ children }: { children: ReactNode }) {
 
   const notify = useCallback((message: string) => {
     const id = crypto.randomUUID();
-    setNotifications((prev) => [...prev, { id, message }]);
+    setNotifications((prev) => [...prev, { id, message, createdAt: nowLabel() }].slice(-12));
     window.setTimeout(() => setNotifications((prev) => prev.filter((item) => item.id !== id)), 3500);
   }, []);
 
@@ -99,6 +101,7 @@ export function CloudDataProvider({ children }: { children: ReactNode }) {
         toggleTheme: () => setTheme((current) => current === "light" ? "dark" : "light"),
         notifications,
         dismissNotification: (id) => setNotifications((prev) => prev.filter((item) => item.id !== id)),
+        clearNotifications: () => setNotifications([]),
       }}
     >
       {children}
