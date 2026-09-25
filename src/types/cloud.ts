@@ -4,17 +4,17 @@
 
 // ---------- Tiempo real ----------
 export interface LiveMetrics {
-  activeConnections: number;   // conexiones/requests activos simulados
-  networkThroughputMbps: number;
-  cpuUsagePercent: number;
-  currentMonthlyCost: number;  // fluctúa levemente para simular uso real
-  lastUpdated: string;         // hora del último "tick"
+    activeConnections: number;   // conexiones/requests activos simulados
+    networkThroughputMbps: number;
+    cpuUsagePercent: number;
+    currentMonthlyCost: number;  // fluctúa levemente para simular uso real
+    lastUpdated: string;         // hora del último "tick"
 }
 
 export interface RegionLiveStatus {
-  regionId: string;
-  latency: number;      // ms
-  load: number;         // % de carga
+    regionId: string;
+    latency: number;      // ms
+    load: number;         // % de carga
 }
 
 // ---------- Comunes ----------
@@ -29,6 +29,7 @@ export interface NavItem {
 // ---------- Módulo: Costos ----------
 export interface CostEstimate {
     id: string;
+    proposalId: string;
     serviceId: string;
     serviceName: string;
     quantity: number;
@@ -90,15 +91,15 @@ export interface CloudProposal {
 
 // ---------- Módulo: Infraestructura Global ----------
 export interface Region {
-  id: string;
-  code: string;
-  name: string;
-  location: string;
-  deployedServices: string[];
-  status: StatusLevel;
-  latitude: number;
-  azCount?: number;
-  longitude: number;
+    id: string;
+    code: string;
+    name: string;
+    location: string;
+    deployedServices: string[];
+    status: StatusLevel;
+    latitude: number;
+    azCount?: number;
+    longitude: number;
     latencyMs?: number;
     compliance?: string[];
     capacityNote?: string;
@@ -156,4 +157,31 @@ export interface DashboardSummary {
     securityStatus: StatusLevel;
     cloudResources: number;
     architectureStatus: StatusLevel;
+}
+
+// ---------- Módulo: Auditoría y Geolocalización (Supabase) ----------
+export type AccionAuditoria = "CREAR" | "ELIMINAR" | "MODIFICAR" | "ACCESO";
+
+export interface CoordenadasGPS {
+    latitud: number;
+    longitud: number;
+    precision_metros?: number;
+}
+
+export interface DatosGeoGPS {
+    proveedor?: string;
+    coordenadas?: CoordenadasGPS;
+    dispositivo?: string;
+    estado?: string;
+}
+
+export interface RegistroAuditoria {
+    id: string;
+    fecha_hora: string;
+    nombre_usuario: string;
+    accion: AccionAuditoria;
+    modulo: string;
+    descripcion: string;
+    direccion_ip: string;
+    datos_geo?: DatosGeoGPS;
 }

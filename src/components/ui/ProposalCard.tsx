@@ -1,12 +1,14 @@
-import { Users, MapPin, Target } from "lucide-react";
+import { Users, MapPin, Target, DollarSign } from "lucide-react";
 import type { CloudProposal } from "../../types/cloud";
 import { awsServices } from "../../data/awsServices";
+import { formatCurrency } from "../../utils/format";
 
 interface ProposalCardProps {
     proposal: CloudProposal;
+    monthlyCost: number;
 }
 
-export default function ProposalCard({ proposal }: ProposalCardProps) {
+export default function ProposalCard({ proposal, monthlyCost }: ProposalCardProps) {
     // Convertimos los ids guardados a nombres legibles para mostrarlos como chips
     const serviceNames = proposal.selectedServices
         .map((id) => awsServices.find((s) => s.id === id)?.name)
@@ -40,6 +42,15 @@ export default function ProposalCard({ proposal }: ProposalCardProps) {
             <p className="text-xs text-text-secondary">
                 Disponibilidad requerida: <span className="font-medium text-text-primary">{proposal.availability}</span>
             </p>
+
+            <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
+                <span className="text-xs text-text-secondary flex items-center gap-1">
+                    <DollarSign size={12} /> Costo estimado
+                </span>
+                <span className="text-sm font-semibold text-cost">
+                    {monthlyCost > 0 ? `${formatCurrency(monthlyCost)}/mes` : "Sin estimar aún"}
+                </span>
+            </div>
         </div>
     );
 }

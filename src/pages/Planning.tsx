@@ -10,7 +10,6 @@ import { regions } from "../data/regions";
 import { useCloudData } from "../context/CloudDataContext";
 import type { CloudProposal, ApplicationType, AvailabilityLevel, MigrationGoal } from "../types/cloud";
 
-// Estado inicial del formulario, tipado sobre CloudProposal sin id/createdAt
 type ProposalDraft = Omit<CloudProposal, "id" | "createdAt">;
 
 const emptyDraft: ProposalDraft = {
@@ -26,15 +25,17 @@ const emptyDraft: ProposalDraft = {
 
 export default function Planning() {
     const [draft, setDraft] = useState<ProposalDraft>(emptyDraft);
-    const { proposals, addProposal, selectedRegionId, setSelectedRegionId } = useCloudData();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { proposals, addProposal, costEstimates, selectedRegionId, setSelectedRegionId } = useCloudData();
+
+    const activeRegion = regions.find((region) => region.id === selectedRegionId);
 
     useEffect(() => {
-        const matchingRegion = regions.find((region) => region.id === selectedRegionId);
-        const matchingLabel = matchingRegion ? `${matchingRegion.code} (${matchingRegion.name})` : undefined;
+        const matchingLabel = activeRegion ? `${activeRegion.code} (${activeRegion.name})` : undefined;
         if (matchingLabel && matchingLabel !== draft.region) {
             setDraft((current) => ({ ...current, region: matchingLabel }));
         }
-    }, [selectedRegionId, draft.region]);
+    }, [selectedRegionId]);
 
     const toggleService = (id: string) => {
         setDraft((prev) => ({
@@ -45,18 +46,20 @@ export default function Planning() {
         }));
     };
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (!draft.solutionName.trim()) return;
+        if (!draft.solutionName.trim() || isSubmitting) return;
 
+        setIsSubmitting(true);
         const newProposal: CloudProposal = {
             ...draft,
             id: crypto.randomUUID(),
             createdAt: new Date().toISOString(),
         };
 
-        addProposal(newProposal);
-        setDraft(emptyDraft); // limpiamos el formulario tras registrar
+        await addProposal(newProposal);
+        setDraft(emptyDraft);
+        setIsSubmitting(false);
     };
 
     return (
@@ -105,7 +108,8 @@ export default function Planning() {
                         onChange={(e) => {
                             const region = e.target.value;
                             setDraft({ ...draft, region });
-                            setSelectedRegionId(regions.find((item) => `${item.code} (${item.name})` === region)?.id ?? regions[0].id);
+                            const matched = regions.find((item) => `${item.code} (${item.name})` === region);
+                            setSelectedRegionId(matched?.id ?? regions[0].id);
                         }}
                     >
                         {regions.map((region) => {
@@ -166,8 +170,8 @@ export default function Planning() {
                                     onClick={() => toggleService(service.id)}
                                     aria-pressed={isSelected}
                                     className={`relative text-left p-3 rounded-xl border transition-all duration-200 ${isSelected
-                                        ? "bg-primary/10 border-primary shadow-sm ring-1 ring-primary/20"
-                                        : "bg-background border-border hover:border-primary/50 hover:-translate-y-0.5"
+                                            ? "bg-primary/10 border-primary shadow-sm ring-1 ring-primary/20"
+                                            : "bg-background border-border hover:border-primary/50 hover:-translate-y-0.5"
                                         }`}
                                 >
                                     <span className="flex items-start justify-between gap-2">
@@ -177,9 +181,7 @@ export default function Planning() {
                                             </span>
                                             <span className="block text-[11px] text-text-secondary mt-0.5">{service.category}</span>
                                         </span>
-                                        <span className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 text-xs transition-colors ${isSelected
-                                            ? "bg-primary border-primary text-white"
-                                            : "border-border text-transparent"
+                                        <span className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 text-xs transition-colors ${isSelected ? "bg-primary border-primary text-white" : "border-border text-transparent"
                                             }`}>
                                             ✓
                                         </span>
@@ -196,9 +198,10 @@ export default function Planning() {
                 <div className="sm:col-span-2 flex justify-end">
                     <button
                         type="submit"
-                        className="bg-primary text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors"
+                        disabled={isSubmitting}
+                        className="bg-primary text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
                     >
-                        Registrar propuesta
+                        {isSubmitting ? "Guardando en Supabase..." : "Registrar propuesta"}
                     </button>
                 </div>
             </form>
@@ -214,7 +217,7 @@ export default function Planning() {
                 </div>
                 <div className="bg-card border border-border rounded-card shadow-card p-4 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-cost/10 text-cost flex items-center justify-center"><Zap size={19} /></div>
-                    <div><p className="text-xs text-text-secondary">Región activa</p><p className="text-sm font-bold text-text-primary">{selectedRegionId}</p></div>
+                    <div><p className="text-xs text-text-secondary">Región activa</p><p className="text-sm font-bold text-text-primary">{activeRegion ? activeRegion.name : "Sin definir"}</p></div>
                 </div>
             </div>
 
@@ -227,9 +230,13 @@ export default function Planning() {
                 <p className="text-sm text-text-secondary">Aún no hay propuestas registradas.</p>
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {proposals.map((proposal) => (
-                        <ProposalCard key={proposal.id} proposal={proposal} />
-                    ))}
+                    {proposals.map((proposal) => {
+                        const monthlyCost = costEstimates
+                            .filter((e) => e.proposalId === proposal.id)
+                            .reduce((sum, e) => sum + e.monthlyCost, 0);
+
+                        return <ProposalCard key={proposal.id} proposal={proposal} monthlyCost={monthlyCost} />;
+                    })}
                 </div>
             )}
         </div>

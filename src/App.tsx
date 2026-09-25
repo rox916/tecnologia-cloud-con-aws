@@ -10,6 +10,7 @@ import NetworkPage from "./pages/Network";
 import Services from "./pages/Services";
 import NotificationCenter from "./components/ui/NotificationCenter";
 import { Link } from "react-router-dom";
+import Audit from "./pages/Audit";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
               <Route path="/security" element={<Security />} />
               <Route path="/network" element={<NetworkPage />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/audit" element={<Audit />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

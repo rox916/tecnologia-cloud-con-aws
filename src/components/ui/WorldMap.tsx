@@ -2,9 +2,15 @@
 import { useState } from "react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 import type { AvailabilityZone, DataCenter, EdgeLocation, Region, RegionLiveStatus } from "../../types/cloud";
+import { formatCurrency } from "../../utils/format";
 import { STATUS_HEX } from "../../utils/statusColors";
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+
+interface RegionStats {
+  proposalCount: number;
+  monthlyCost: number;
+}
 
 interface WorldMapProps {
   regions: Region[];
@@ -14,9 +20,10 @@ interface WorldMapProps {
   edgeLocations?: EdgeLocation[];
   selectedRegionId: string | null;
   onSelectRegion: (id: string) => void;
+  regionStats?: Record<string, RegionStats>;
 }
 
-export default function WorldMap({ regions, liveStatus = [], availabilityZones = [], dataCenters = [], edgeLocations = [], selectedRegionId, onSelectRegion }: WorldMapProps) {
+export default function WorldMap({ regions, liveStatus = [], availabilityZones = [], dataCenters = [], edgeLocations = [], selectedRegionId, onSelectRegion, regionStats = {} }: WorldMapProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [hoveredLayerId, setHoveredLayerId] = useState<string | null>(null);
   const liveById = Object.fromEntries(liveStatus.map((s) => [s.regionId, s]));
@@ -92,6 +99,7 @@ export default function WorldMap({ regions, liveStatus = [], availabilityZones =
 
         {regions.map((region) => {
           const live = liveById[region.id];
+          const regionSummary = regionStats[region.id] ?? { proposalCount: 0, monthlyCost: 0 };
           const isSelected = selectedRegionId === region.id;
           const isHovered = hoveredId === region.id;
           const color = STATUS_HEX[region.status];
@@ -118,8 +126,8 @@ export default function WorldMap({ regions, liveStatus = [], availabilityZones =
                   <rect
                     x={0}
                     y={-14}
-                    width={Math.max(90, region.name.length * 6.5)}
-                    height={live ? 40 : 24}
+                    width={Math.max(110, region.name.length * 6.5)}
+                    height={live ? 54 : 46}
                     rx={6}
                     fill="#0F172A"
                   />
@@ -127,13 +135,26 @@ export default function WorldMap({ regions, liveStatus = [], availabilityZones =
                     {region.name}
                   </text>
                   {live ? (
-                    <text x={8} y={14} fontSize={9} fill="#94A3B8">
-                      {live.latency}ms · {live.load}% carga
-                    </text>
+                    <>
+                      <text x={8} y={14} fontSize={9} fill="#94A3B8">
+                        {live.latency}ms · {live.load}% carga
+                      </text>
+                      <text x={8} y={26} fontSize={9} fill="#94A3B8">
+                        {regionSummary.proposalCount} propuestas
+                      </text>
+                      <text x={8} y={38} fontSize={9} fill="#A7F3D0">
+                        {formatCurrency(regionSummary.monthlyCost)}/mes
+                      </text>
+                    </>
                   ) : (
-                    <text x={8} y={14} fontSize={9} fill="#94A3B8">
-                      {region.deployedServices.length} servicio(s)
-                    </text>
+                    <>
+                      <text x={8} y={14} fontSize={9} fill="#94A3B8">
+                        {regionSummary.proposalCount} propuestas
+                      </text>
+                      <text x={8} y={26} fontSize={9} fill="#A7F3D0">
+                        {formatCurrency(regionSummary.monthlyCost)}/mes
+                      </text>
+                    </>
                   )}
                 </g>
               )}

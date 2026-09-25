@@ -1,4 +1,5 @@
 // src/pages/Infrastructure.tsx
+import { useMemo } from "react";
 import { Activity, Database, Globe2, MapPinned, RadioTower, Server, ShieldCheck } from "lucide-react";
 import Header from "../components/layout/Header";
 import RegionCard from "../components/ui/RegionCard";
@@ -9,11 +10,44 @@ import { useCloudData } from "../context/CloudDataContext";
 import { inputClasses } from "../utils/formStyles";
 
 export default function Infrastructure() {
-  const { selectedRegionId, setSelectedRegionId } = useCloudData();
+  const { proposals, costEstimates, selectedRegionId, setSelectedRegionId } = useCloudData();
   const selectedRegion = regions.find((region) => region.id === selectedRegionId) ?? regions[0];
   const selectedAvailabilityZones = availabilityZones.filter((zone) => zone.regionId === selectedRegion.id);
   const selectedDataCenters = dataCenters.filter((center) => center.regionId === selectedRegion.id);
   const selectedEdgeLocations = edgeLocations.filter((edge) => edge.regionId === selectedRegion.id);
+
+  const regionStats = useMemo(() => {
+    const stats = Object.fromEntries(
+      regions.map((region) => [region.id, { proposalCount: 0, monthlyCost: 0 }])
+    ) as Record<string, { proposalCount: number; monthlyCost: number }>;
+
+    const monthlyCostByProposal = new Map<string, number>();
+    proposals.forEach((proposal) => {
+      const monthlyCost = costEstimates
+        .filter((estimate) => estimate.proposalId === proposal.id)
+        .reduce((sum, estimate) => sum + estimate.monthlyCost, 0);
+      monthlyCostByProposal.set(proposal.id, monthlyCost);
+    });
+
+    proposals.forEach((proposal) => {
+      const matchedRegion = regions.find((region) =>
+        proposal.region === region.id ||
+        proposal.region === `${region.code} (${region.name})` ||
+        proposal.region === region.name ||
+        proposal.region === region.code
+      );
+
+      if (!matchedRegion) return;
+
+      const entry = stats[matchedRegion.id];
+      if (!entry) return;
+
+      entry.proposalCount += 1;
+      entry.monthlyCost += monthlyCostByProposal.get(proposal.id) ?? 0;
+    });
+
+    return stats;
+  }, [proposals, costEstimates]);
 
   return (
     <div>
@@ -40,6 +74,7 @@ export default function Infrastructure() {
           edgeLocations={edgeLocations}
           selectedRegionId={selectedRegionId}
           onSelectRegion={setSelectedRegionId}
+          regionStats={regionStats}
         />
       </div>
 
@@ -107,7 +142,11 @@ export default function Infrastructure() {
               selectedRegionId === region.id ? "ring-2 ring-primary" : ""
             }`}
           >
-            <RegionCard region={region} />
+            <RegionCard
+              region={region}
+              proposalCount={regionStats[region.id]?.proposalCount ?? 0}
+              monthlyCost={regionStats[region.id]?.monthlyCost ?? 0}
+            />
           </div>
         ))}
       </div>
