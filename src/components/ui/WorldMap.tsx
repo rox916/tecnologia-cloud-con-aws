@@ -1,7 +1,7 @@
 // src/components/ui/WorldMap.tsx
 import { useState } from "react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
-import type { Region, RegionLiveStatus } from "../../types/cloud";
+import type { AvailabilityZone, DataCenter, EdgeLocation, Region, RegionLiveStatus } from "../../types/cloud";
 import { STATUS_HEX } from "../../utils/statusColors";
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -9,13 +9,29 @@ const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
 interface WorldMapProps {
   regions: Region[];
   liveStatus?: RegionLiveStatus[]; // ahora opcional
+  availabilityZones?: AvailabilityZone[];
+  dataCenters?: DataCenter[];
+  edgeLocations?: EdgeLocation[];
   selectedRegionId: string | null;
   onSelectRegion: (id: string) => void;
 }
 
-export default function WorldMap({ regions, liveStatus = [], selectedRegionId, onSelectRegion }: WorldMapProps) {
+export default function WorldMap({ regions, liveStatus = [], availabilityZones = [], dataCenters = [], edgeLocations = [], selectedRegionId, onSelectRegion }: WorldMapProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [hoveredLayerId, setHoveredLayerId] = useState<string | null>(null);
   const liveById = Object.fromEntries(liveStatus.map((s) => [s.regionId, s]));
+  const regionById = Object.fromEntries(regions.map((region) => [region.id, region]));
+  const markerCoordinates = (regionId: string, index: number, layer: "zone" | "dataCenter" | "edge") => {
+    const region = regionById[regionId];
+    if (!region) return [0, 0] as [number, number];
+    const offsets = layer === "zone"
+      ? [[-1.8, 1.4], [1.8, 1.4], [0, -1.8]]
+      : layer === "dataCenter"
+        ? [[-2.8, -1], [2.8, -1], [0, 2.5]]
+        : [[-4.5, 0], [4.5, 0], [0, 4]];
+    const [longitudeOffset, latitudeOffset] = offsets[index % offsets.length];
+    return [region.longitude + longitudeOffset, region.latitude + latitudeOffset] as [number, number];
+  };
 
   return (
     <div className="relative">
@@ -34,6 +50,45 @@ export default function WorldMap({ regions, liveStatus = [], selectedRegionId, o
             ))
           }
         </Geographies>
+
+        {availabilityZones.map((zone, index) => {
+          const layerId = `zone-${zone.id}`;
+          const region = regionById[zone.regionId];
+          if (!region) return null;
+          const isHovered = hoveredLayerId === layerId;
+          return (
+            <Marker key={layerId} coordinates={markerCoordinates(zone.regionId, index, "zone")}>
+              <circle r={isHovered ? 3.8 : 2.8} fill="#2563EB" stroke="#FFFFFF" strokeWidth={1} onMouseEnter={() => setHoveredLayerId(layerId)} onMouseLeave={() => setHoveredLayerId(null)} />
+              {isHovered && <g transform="translate(6, -7)"><rect x={0} y={-13} width={Math.max(84, zone.code.length * 6)} height={25} rx={4} fill="#0F172A" /><text x={6} y={3} fontSize={8.5} fill="#FFFFFF">{zone.code} · {region.code}</text></g>}
+            </Marker>
+          );
+        })}
+
+        {dataCenters.map((center, index) => {
+          const layerId = `data-center-${center.id}`;
+          const region = regionById[center.regionId];
+          if (!region) return null;
+          const isHovered = hoveredLayerId === layerId;
+          return (
+            <Marker key={layerId} coordinates={markerCoordinates(center.regionId, index, "dataCenter")}>
+              <circle r={isHovered ? 4.2 : 3.2} fill="#16A34A" stroke="#FFFFFF" strokeWidth={1} onMouseEnter={() => setHoveredLayerId(layerId)} onMouseLeave={() => setHoveredLayerId(null)} />
+              {isHovered && <g transform="translate(6, -7)"><rect x={0} y={-13} width={Math.max(92, center.name.length * 5.3)} height={25} rx={4} fill="#0F172A" /><text x={6} y={3} fontSize={8.5} fill="#FFFFFF">{center.name}</text></g>}
+            </Marker>
+          );
+        })}
+
+        {edgeLocations.map((edge, index) => {
+          const layerId = `edge-${edge.id}`;
+          const region = regionById[edge.regionId];
+          if (!region) return null;
+          const isHovered = hoveredLayerId === layerId;
+          return (
+            <Marker key={layerId} coordinates={markerCoordinates(edge.regionId, index, "edge")}>
+              <circle r={isHovered ? 4.2 : 3.2} fill="#EA580C" stroke="#FFFFFF" strokeWidth={1} onMouseEnter={() => setHoveredLayerId(layerId)} onMouseLeave={() => setHoveredLayerId(null)} />
+              {isHovered && <g transform="translate(6, -7)"><rect x={0} y={-13} width={Math.max(84, edge.name.length * 5.5)} height={25} rx={4} fill="#0F172A" /><text x={6} y={3} fontSize={8.5} fill="#FFFFFF">{edge.name}</text></g>}
+            </Marker>
+          );
+        })}
 
         {regions.map((region) => {
           const live = liveById[region.id];
@@ -86,6 +141,12 @@ export default function WorldMap({ regions, liveStatus = [], selectedRegionId, o
           );
         })}
       </ComposableMap>
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pt-2 text-[11px] text-text-secondary">
+        <span className="inline-flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-full bg-primary" /> Región</span>
+        <span className="inline-flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-full bg-blue-600" /> Zona de disponibilidad</span>
+        <span className="inline-flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-full bg-green-600" /> Centro de datos</span>
+        <span className="inline-flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-full bg-orange-600" /> Ubicación de borde</span>
+      </div>
     </div>
   );
 }

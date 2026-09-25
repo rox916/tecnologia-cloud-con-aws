@@ -105,6 +105,33 @@ export interface Region {
     recommendedFor?: string;
 }
 
+export interface AvailabilityZone {
+    id: string;
+    regionId: string;
+    name: string;
+    code: string;
+    status: StatusLevel;
+    dataCenterCount: number;
+}
+
+export interface DataCenter {
+    id: string;
+    regionId: string;
+    name: string;
+    city: string;
+    status: StatusLevel;
+    purpose: string;
+}
+
+export interface EdgeLocation {
+    id: string;
+    regionId: string;
+    name: string;
+    city: string;
+    country: string;
+    services: string[];
+}
+
 // ---------- Módulo: Seguridad ----------
 export interface SecurityIndicator {
     id: string;
